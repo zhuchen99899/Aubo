@@ -51,6 +51,7 @@
 "..\obj\task_mqtt_pingreq.o"
 "..\obj\task_mqtt_rec.o"
 "..\obj\task_mqtt_subscribe.o"
+"..\obj\task_key.o"
 "..\EMWIN\STemWin\Lib\STemWin532_CM3_OS_Keil.lib"
 "..\obj\guiconf.o"
 "..\obj\gui_x_freertos.o"
@@ -68,6 +69,8 @@
 "..\obj\mqttunpacket.o"
 "..\obj\mqtt_init.o"
 "..\obj\cjson.o"
+"..\obj\modbus_slave.o"
+"..\obj\crc.o"
 --strict --scatter "..\OBJ\Main.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

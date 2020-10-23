@@ -31,6 +31,7 @@ os应用
 #include "task_emwin.h"
 #include "task_usrif.h"
 #include "task_led.h"
+#include "task_key.h"
 #include "task_modbus.h"
 #include "task_MQTT_connect.h"
 #include "task_MQTT_pingreq.h"
@@ -40,13 +41,28 @@ os应用
 
 
 
+//freertos配设
+#include "FreeRTOSConfig.h"
+
+
+/***********************************
+emwin 应用
+************************************/
+//ICON 桌面
+#include "iconvdesk.h"
+
+//按键控制面板APP
+#include "ButtonController.h" 
+
+//emwin渐变色彩库
+#include "ST_GUI_Addons.h"
+
 
 
 
 /***********************************
 功能库
 ************************************/
-
 
 
 /***********系统功能************/
@@ -60,14 +76,32 @@ os应用
 #include "WM.h"
 
 
+/*********MQTT库**************/
+
+#include "MQTTconnect.h"
+#include "MQTTpacket.h"
+#include "MQTTpingreq.h"
+#include "MQTTpublish.h"
+#include "MQTTsubscribe.h"
+#include "MQTTunpacket.h"
 
 
+//MQTT配设
+#include "MQTT_init.h"
+#include "MQTTConfig.h"
 
 
+/**********CJSON库************/
+#include "cJSON.h"
 
 
+/*********MODBUS库************/
+#include "modbus_slave.h"
 
-
+//modbus配设
+#include "MODBUSConfig.h"
+//CRC校验
+#include "crc.h"
 
 
 

@@ -1,6 +1,5 @@
 ..\obj\task_led.o: ..\FreeRTOS\Freertos_APP\task_led.c
 ..\obj\task_led.o: ..\FreeRTOS\Freertos_APP\task_led.h
-..\obj\task_led.o: ..\FreeRTOS\Freertos_APP\task_led.h
 ..\obj\task_led.o: ..\FreeRTOS\include\freertos.h
 ..\obj\task_led.o: D:\tools\code tools\keil\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\task_led.o: D:\tools\code tools\keil\ARM\ARMCC\Bin\..\include\stdint.h

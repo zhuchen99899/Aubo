@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\MALLOC;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\HARDWARE\LED;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\SPI;..\HARDWARE\KEY;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\W25QXX;..\EMWIN\App;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\FreeRTOS\Freertos_APP;..\EMWIN\STemWin_Addons;..\CJSON;..\MQTT;..\HARDWARE\RS485;..\HARDWARE\WIFI</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\MALLOC;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\HARDWARE\LED;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\SPI;..\HARDWARE\KEY;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\W25QXX;..\EMWIN\App;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\FreeRTOS\Freertos_APP;..\EMWIN\STemWin_Addons;..\CJSON;..\MQTT;..\HARDWARE\RS485;..\HARDWARE\WIFI;..\MODBUS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -718,6 +718,11 @@
               <FileType>1</FileType>
               <FilePath>..\FreeRTOS\Freertos_APP\task_MQTT_subscribe.c</FilePath>
             </File>
+            <File>
+              <FileName>task_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FreeRTOS\Freertos_APP\task_key.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -847,6 +852,26 @@
               <FileName>cJSON.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CJSON\cJSON.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MODBUS</GroupName>
+          <Files>
+            <File>
+              <FileName>modbus_slave.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MODBUS\modbus_slave.c</FilePath>
+            </File>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MODBUS\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUSConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\MODBUS\MODBUSConfig.h</FilePath>
             </File>
           </Files>
         </Group>

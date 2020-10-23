@@ -27,6 +27,7 @@ void touch_task(void *pvParameters);		//TOUCH任务
 void UserIf_task(void *pvParameters);		//空闲任务
 void emwin_task(void *pvParameters); 	//emwin任务
 void led_task(void *pvParameters);       //led任务
+void key_task(void *pvParameters);       //key任务
 void modbus_task(void *pvParameters);       //modbus_RTU任务
 void MQTT_Connect_task(void *pvParameters);       // MQTTconnect任务
 void MQTT_rec_task(void *pvParameters);				// MQTT接收任务
@@ -41,6 +42,7 @@ TaskHandle_t TouchTask_Handler;			//TOUCH任务
 TaskHandle_t UserIfTask_Handler;		//空闲任务
 TaskHandle_t EmwinTask_Handler;		//emwin任务
 TaskHandle_t LedTask_Handler;		//led任务
+TaskHandle_t KeyTask_Handler;		//Key任务
 TaskHandle_t ModbusTask_Handler;		//modbus_RTU任务
 TaskHandle_t MQTT_Connect_task_Handler;		  // MQTTconnect任务
 TaskHandle_t MQTT_Rec_task_Handler;		  // MQTT接收任务
@@ -55,6 +57,7 @@ TaskHandle_t MQTT_SUBSCRIBE_task_Handler;				// MQTTSUBSCRIBE任务
 #define USERIF_STK_SIZE			128		//空闲任务
 #define EMWIN_STK_SIZE		512		//emwin任务
 #define LED_STK_SIZE     128    //LED任务
+#define KEY_STK_SIZE     128    //KEY任务
 #define MODBUS_STK_SIZE     512    //modbus_RTU任务
 #define MQTT_Connect_STK_SIZE		256	// MQTTconnect任务
 #define MQTT_Rec_STK_SIZE		512	// MQTT接收任务
@@ -68,6 +71,7 @@ TaskHandle_t MQTT_SUBSCRIBE_task_Handler;				// MQTTSUBSCRIBE任务
 #define USERIF_TASK_PRIO 		0	   //空闲任务
 #define EMWIN_TASK_PRIO		0		//emwin任务
 #define LED_TASK_PRIO        1    //led任务
+#define KEY_TASK_PRIO        1    //Key任务
 #define MODBUS_TASK_PRIO        2    //modbus_RTU任务
 #define MQTT_Connect_TASK_PRIO		3		// MQTTCONNCET任务
 #define MQTT_Rec_TASK_PRIO		2		// MQTT接收任务
@@ -95,7 +99,7 @@ int main(void)
 	RS485_init(115200);					//初始化串口2 ：485总线
 	wifi_init(115200);					//初始化串口3:  wifi串口
 	LED_Init();		  					//初始化LED
-	KEY_Init();							//初始化按键
+  bsp_InitKey();	/* 初始化按键 */
 	TFTLCD_Init();						//LCD初始化	
 	FSMC_SRAM_Init();					//初始化SRAM
 	TP_Init();							//触摸屏初始化
@@ -166,6 +170,16 @@ void start_task(void *pvParameters)
                 (void*          )NULL,                  
                 (UBaseType_t    )LED_TASK_PRIO,        
                 (TaskHandle_t*  )&LedTask_Handler);   		
+					
+
+		//创建key任务
+    xTaskCreate((TaskFunction_t )key_task,             
+                (const char*    )"key_task",           
+                (uint16_t       )KEY_STK_SIZE,        
+                (void*          )NULL,                  
+                (UBaseType_t    )KEY_TASK_PRIO,        
+                (TaskHandle_t*  )&KeyTask_Handler); 
+
 								
 		//创建Modbus RTU任务
 		xTaskCreate((TaskFunction_t )modbus_task,             
