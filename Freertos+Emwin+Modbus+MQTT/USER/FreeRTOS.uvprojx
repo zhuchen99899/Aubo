@@ -873,6 +873,11 @@
               <FileType>5</FileType>
               <FilePath>..\MODBUS\MODBUSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>modbus_packet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MODBUS\modbus_packet.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

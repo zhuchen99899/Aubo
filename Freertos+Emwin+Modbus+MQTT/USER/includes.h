@@ -96,8 +96,11 @@ emwin 应用
 
 
 /*********MODBUS库************/
+//modbus从站相关
 #include "modbus_slave.h"
 
+//modbus 包文相关
+#include "modbus_packet.h"
 //modbus配设
 #include "MODBUSConfig.h"
 //CRC校验

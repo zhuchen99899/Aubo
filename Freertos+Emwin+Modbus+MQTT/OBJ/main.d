@@ -115,6 +115,10 @@
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_led.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_key.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_modbus.h
+..\obj\main.o: ..\MODBUS\modbus_slave.h
+..\obj\main.o: ..\MODBUS\MODBUSconfig.h
+..\obj\main.o: ..\MODBUS\crc.h
+..\obj\main.o: ..\MODBUS\modbus_packet.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_MQTT_connect.h
 ..\obj\main.o: ..\MQTT\MQTT.h
 ..\obj\main.o: ..\MQTT\MQTTConfig.h
@@ -130,6 +134,3 @@
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_MQTT_subscribe.h
 ..\obj\main.o: ..\USER\OS_AppObjCreate.h
 ..\obj\main.o: ..\SYSTEM\delay\delay.h
-..\obj\main.o: ..\MODBUS\modbus_slave.h
-..\obj\main.o: ..\MODBUS\MODBUSconfig.h
-..\obj\main.o: ..\MODBUS\crc.h

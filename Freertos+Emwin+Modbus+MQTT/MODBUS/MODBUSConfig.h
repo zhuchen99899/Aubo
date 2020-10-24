@@ -3,8 +3,32 @@
 
 
 
-#define SADDR485	1
+typedef struct {
+
+	u8 RspCode;
+	int RS485_send_Len;
+	u8 RS485_send_Buf[256];
+
+}ModbusSlaveSolve_T;
+
+
+typedef struct
+{
+	
+	
+	/* 03H 06H 读写保持寄存器 */
+	uint16_t P01;
+	uint16_t P02;
+
+
+}VAR_T;
+
+
+
+#define SADDR485	2
 #define SBAUD485	UART3_BAUD
+
+
 
 /* 01H 读强制单线圈 */
 /* 05H 写强制单线圈 */
@@ -37,6 +61,7 @@
 #define RSP_ERR_REG_ADDR	0x02	/* 寄存器地址错误 */
 #define RSP_ERR_VALUE		0x03	/* 数据值域错误 */
 #define RSP_ERR_WRITE		0x04	/* 写入失败 */
+#define BSP_ERR         0x05
 
 #define S_RX_BUF_SIZE		30
 #define S_TX_BUF_SIZE		128

@@ -47,3 +47,7 @@
 ..\obj\task_modbus.o: ..\FreeRTOS\include\semphr.h
 ..\obj\task_modbus.o: ..\HARDWARE\RS485\RS485.h
 ..\obj\task_modbus.o: D:\tools\code tools\keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\task_modbus.o: ..\MODBUS\modbus_slave.h
+..\obj\task_modbus.o: ..\MODBUS\MODBUSconfig.h
+..\obj\task_modbus.o: ..\MODBUS\crc.h
+..\obj\task_modbus.o: ..\MODBUS\modbus_packet.h

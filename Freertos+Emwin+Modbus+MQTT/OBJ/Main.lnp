@@ -71,6 +71,7 @@
 "..\obj\cjson.o"
 "..\obj\modbus_slave.o"
 "..\obj\crc.o"
+"..\obj\modbus_packet.o"
 --strict --scatter "..\OBJ\Main.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -5,6 +5,12 @@
 #include "queue.h"
 #include "semphr.h"
 #include "RS485.h"
+#include "modbus_slave.h"
+
+
+
+
+
 
 
 
