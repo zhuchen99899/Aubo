@@ -1,8 +1,10 @@
 #include "modbus_packet.h"
 
-
-
+#if Freertos_SUPPROT
+extern  QueueHandle_t MODBUS_Var_Queue;
+#else
 extern VAR_T g_tVar;
+#endif
 /*
 *********************************************************************************************************
 *	函 数 名: MODS_ReadRegValue
@@ -15,15 +17,33 @@ extern VAR_T g_tVar;
 uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 {
 	uint16_t value;
+	#if Freertos_SUPPROT
+	VAR_T *MODBUS_reg;
+	VAR_T init_modbus_reg;
+	MODBUS_reg=&init_modbus_reg;
+	#endif
+	
 	
 	switch (reg_addr)									/* 判断寄存器地址 */
 	{
 		case SLAVE_REG_P01:
-			value =	g_tVar.P01;	
+			#if Freertos_SUPPROT
+			xQueuePeek(MODBUS_Var_Queue,(void *)&MODBUS_reg,portMAX_DELAY);
+			value=MODBUS_reg->P01;
+			#else 
+			value =	g_tVar.P01;							/* 将寄存器值读出 */
+			#endif
 			break;
 
 		case SLAVE_REG_P02:
+			
+			#if Freertos_SUPPROT
+			xQueuePeek(MODBUS_Var_Queue,(void *)&MODBUS_reg,portMAX_DELAY);
+			value=MODBUS_reg->P02;
+			#else 
 			value =	g_tVar.P02;							/* 将寄存器值读出 */
+			#endif
+		
 			break;
 	
 		default:
@@ -50,14 +70,35 @@ uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 */
 uint8_t MODS_WriteRegValue(uint16_t reg_addr, uint16_t reg_value)
 {
+	
+	#if Freertos_SUPPROT
+	VAR_T *MODBUS_reg;
+	VAR_T init_modbus_reg;
+	MODBUS_reg=&init_modbus_reg;
+	#endif
+	
 	switch (reg_addr)							/* 判断寄存器地址 */
 	{	
 		case SLAVE_REG_P01:
-			g_tVar.P01 = reg_value;				/* 将值写入保存寄存器 */
+			
+		#if Freertos_SUPPROT
+			xQueuePeek(MODBUS_Var_Queue,(void *)&MODBUS_reg,portMAX_DELAY);
+			MODBUS_reg->P01=reg_value;
+		#else 
+			g_tVar.P01 = reg_value;							/* 将值写入保存寄存器 */
+		#endif
+					
 			break;
 		
 		case SLAVE_REG_P02:
-			g_tVar.P02 = reg_value;				/* 将值写入保存寄存器 */
+			
+		#if Freertos_SUPPROT
+			xQueuePeek(MODBUS_Var_Queue,(void *)&MODBUS_reg,portMAX_DELAY);
+			MODBUS_reg->P02=reg_value;
+		#else 
+		g_tVar.P02 = reg_value;							/* 将值写入保存寄存器 */
+		#endif
+							
 			break;
 		
 		default:
@@ -91,9 +132,11 @@ void MODS_SendWithCRC(u8 *RS485_send_buffer, int RS485_send_Len)
 	buf[RS485_send_Len++] = crc >> 8;
 	buf[RS485_send_Len++] = crc;
 
+
+	
 	RS485_send(buf, RS485_send_Len);
 	
-#if 1									/* 此部分为了串口打印结果,实际运用中可不要 */
+	#if 1									/* 此部分为了串口打印结果,实际运用中可不要 */
 	
 	
 		for (i = 0; i < RS485_send_Len; i++)

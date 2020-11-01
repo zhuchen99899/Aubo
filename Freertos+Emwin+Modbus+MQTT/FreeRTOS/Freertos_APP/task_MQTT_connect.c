@@ -46,8 +46,8 @@ conncect_init(); //MQTTconncet 报头初始化设置
 	
       vTaskDelay(15000);                           //延时15s
 
-}
+	}
+
+
 
 }
-
-

@@ -1,7 +1,7 @@
 #ifndef __MODBUSCONFIG_H
 #define __MODBUSCONFIG_H
 
-
+#define Freertos_SUPPROT  1
 
 typedef struct {
 

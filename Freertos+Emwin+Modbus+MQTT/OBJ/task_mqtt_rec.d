@@ -57,3 +57,4 @@
 ..\obj\task_mqtt_rec.o: ..\MQTT\MQTTsubscribe.h
 ..\obj\task_mqtt_rec.o: ..\MQTT\MQTTpublish.h
 ..\obj\task_mqtt_rec.o: ..\CJSON\cJSON.h
+..\obj\task_mqtt_rec.o: ..\MODBUS\MODBUSConfig.h

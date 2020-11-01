@@ -33,6 +33,7 @@ extern SETMSG g_tMsg;
 	extern QueueHandle_t Wifi_buffer_Queue;
 	extern QueueHandle_t PINGREQ_Queue;
 	extern QueueHandle_t Key_Queue;
+	extern QueueHandle_t MODBUS_Var_Queue;
 
 		/**************事件组句柄**********/
 
@@ -40,7 +41,9 @@ extern SETMSG g_tMsg;
 /*************************WIFI接收任务函数******************/
 void MQTT_rec_task(void *pvParameters)
 {
-	
+	//MODBUS参数
+	VAR_T *MODBUS_reg;
+VAR_T init_modbus_reg;
 	
 		/**********************SUBACK解包参数**********************/
 	unsigned short DeserializeSuback_packetid;
@@ -91,13 +94,13 @@ void MQTT_rec_task(void *pvParameters)
 
 
 	
-	u8 key=0;
-	
+//	u8 key=0;
+	MODBUS_reg=&init_modbus_reg;
 	
 /*******************阻塞等待DMA中断中传来的ISR信号量***************/
 	while(1)
 	{	
-	err=xSemaphoreTake(BinarySemaphore_USART3ISR,portMAX_DELAY);	//获取串口2空闲中断二值信号量
+	err=xSemaphoreTake(BinarySemaphore_USART3ISR,portMAX_DELAY);	//获取串口3空闲中断二值信号量
 	if(err==pdTRUE)										//获取信号量成功
 			{
 				
@@ -225,7 +228,7 @@ topic1[DeserializePublish_topicName.len]=0;
 							/***********按键主题*******************/
 			if((strcmp(topic1,topic1_compare_Universal)==0)||(strcmp(topic1,topic1_compare_monolayer)==0)||(strcmp(topic1,subscrible1_topicFilters1)==0))
 			{
-				printf("主题为按键主题\r\n");							
+				printf("主题为Aubo主题\r\n");							
 				printf("主题为%s\r\n",topic1);	
 				printf("负载为\r\n");
 				
@@ -241,15 +244,15 @@ topic1[DeserializePublish_topicName.len]=0;
 
 									/****************JASON树中键值对解析***************/
 									//根据键名再JASON中查找子节点，查找出LED1对象
-									node = cJSON_GetObjectItem(json, "LED1");
+									node = cJSON_GetObjectItem(json, "action1");
 									if (node == NULL)
 									{
-									printf("LED1: no\r\n");
+									printf("action1: no\r\n");
 										
 									}	
 									else
 									{
-									printf("LED1: ok\r\n");
+									printf("action1: ok\r\n");
 										 if( node->type == cJSON_Number )
 
 											{
@@ -258,15 +261,17 @@ topic1[DeserializePublish_topicName.len]=0;
 												printf("value:%d\r\n",node->valueint);
 														if((node->valueint)==1)
 														{
-														key=1;	
-														xQueueSend(Key_Queue,&key,10);
-														printf("LED1点亮");
+														MODBUS_reg->P01=1;	
+														MODBUS_reg->P02=1;
+														xQueueOverwrite(MODBUS_Var_Queue,&MODBUS_reg);
+														printf("action1动作寄存器置1");
 														}
 														else if((node->valueint)==0)
 														{
-														key=0;	
-														xQueueSend(Key_Queue,&key,10);
-														printf("LED1熄灭");
+														MODBUS_reg->P01=0;	
+														MODBUS_reg->P02=0;
+														xQueueOverwrite(MODBUS_Var_Queue,&MODBUS_reg);
+														printf("action1动作寄存器置0");
 														}
 
 											}//查找LED1值

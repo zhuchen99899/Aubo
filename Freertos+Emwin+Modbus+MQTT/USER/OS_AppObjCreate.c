@@ -23,7 +23,7 @@ u32 length;
 
 } WIFIMSG;
 	
-
+VAR_T MODBUS_regvar;
 
 /***********************************************************
 						ĞÅºÅÁ¿¾ä±ú
@@ -42,6 +42,7 @@ extern SemaphoreHandle_t BinarySemaphore_MQTTsubscribe;//MQTT SUBSCRIBE±¨ÎÄ¶şÖµĞ
 #define RS485MESSAGE_buffer_Q_NUM    1 //RS485ÏûÏ¢¶ÓÁĞÊıÁ¿
 #define WIFIMESSAGE_buffer_Q_NUM   1   	//wifi½ÓÊÕÊı¾İµÄÏûÏ¢¶ÓÁĞµÄÊıÁ¿ 
 #define PINGREQ_Q_NUM   1   	//PINGREQµÄÏûÏ¢¶ÓÁĞµÄÊıÁ¿  
+#define MODBUS_Var_Q_NUM    1     //
 //°´¼üÏûÏ¢¶ÓÁĞ
 void Key_QueueCreat(void)
 {
@@ -110,7 +111,21 @@ void PINGREQ_QueueCreat(void)
 	}
 }
 
-
+void MODBUS_Var_QueueCreat(void)
+{
+	extern QueueHandle_t MODBUS_Var_Queue;
+	MODBUS_Var_Queue =xQueueCreate(MODBUS_Var_Q_NUM,sizeof(MODBUS_regvar));
+	
+	if (MODBUS_Var_Queue==0)
+	{
+	/*ÏûÏ¢´´½¨Ê§°Ü´¦Àí»úÖÆ*/
+	printf("MODBUS_Var_QueueÏûÏ¢¶ÓÁĞ´´½¨Ê§°Ü");
+	}
+	else 
+	{
+	printf("MODBUS_Var_QueueÏûÏ¢¶ÓÁĞ´´½¨³É¹¦");
+	}
+}
 
 void QueueCreate(void)
 {
@@ -119,6 +134,7 @@ Key_QueueCreat();
 RS485_buffer_QueueCreat();	
 WIFI_buffer_QueueCreat();
 PINGREQ_QueueCreat();
+MODBUS_Var_QueueCreat();
 }
 
 

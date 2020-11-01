@@ -43,5 +43,7 @@
 ..\obj\task_key.o: ..\FreeRTOS\include\mpu_wrappers.h
 ..\obj\task_key.o: ..\FreeRTOS\include\task.h
 ..\obj\task_key.o: ..\FreeRTOS\include\list.h
+..\obj\task_key.o: ..\FreeRTOS\include\queue.h
+..\obj\task_key.o: ..\MODBUS\MODBUSConfig.h
 ..\obj\task_key.o: ..\HARDWARE\KEY\key.h
 ..\obj\task_key.o: ..\HARDWARE\LED\led.h

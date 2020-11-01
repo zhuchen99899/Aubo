@@ -36,7 +36,7 @@ void usart3_init(u32 bound)
 	
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_11;
-	//GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;    //´®¿Ú3RX( PB11)ÒªÉèÎª¸¡¿ÕÊäÈë»òÉÏÀ­ÊäÈë
+	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;    //´®¿Ú3RX( PB11)ÒªÉèÎª¸¡¿ÕÊäÈë»òÉÏÀ­ÊäÈë
 	//PA10³õÊ¼»¯½á¹¹Ìå³ÉÔ±±äÁ¿¸³Öµ
 	GPIO_Init(GPIOB,&GPIO_InitStructure);
 	
@@ -157,7 +157,7 @@ DMA_Cmd(DMA1_Channel2, DISABLE);//¹Ø±Õ·¢ËÍÍ¨µÀ ¡¾×¢Òâ¡¿ ·¢ËÍÊ±ÔÙ¿ªÆô£¬·ÀÖ¹DMA½ÓÊ
   DMA_Init(DMA1_Channel3, &DMA_InitStructure);  //DMAÍ¨µÀ3½á¹¹Ìå¸³Öµ
 
 //ÖĞ¶ÏÅäÉè
-DMA_ITConfig(DMA1_Channel3, DMA_IT_TC, ENABLE);//Ê¹ÄÜ´«Êä»º³åÒç³öÖĞ¶Ï
+DMA_ITConfig(DMA1_Channel3, DMA_IT_TC, ENABLE);//Ê¹ÄÜ´«Êä»º³åÍê³ÉÖĞ¶Ï
 
 DMA_ITConfig(DMA1_Channel3, DMA_IT_TE, ENABLE); //Ê¹ÄÜ´«Êä´íÎóÖĞ¶Ï
 
@@ -200,7 +200,7 @@ void NVIC_USART3_cofig_Init(void)
 	 /****DMA Í¨µÀ2 NVICÖĞ¶Ï  ·¢ËÍ*********/
   NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_IRQn;
  
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 13;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 14;
  
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
  
@@ -212,7 +212,7 @@ void NVIC_USART3_cofig_Init(void)
 	 /****DMA1 Í¨µÀ3 NVICÖĞ¶Ï  ½ÓÊÕ*********/
   NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel3_IRQn;
  
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 13;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 14;
  
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
  
@@ -267,11 +267,15 @@ void USART3_IRQHandler(void)
 			receivebuff=&wifi_tMsg;//ÏûÏ¢½á¹¹Ìå³õÊ¼»¯
 			receivebuff->wifi_lenth=0;//ÏûÏ¢½á¹¹Ìå³õÊ¼»¯
 	
-
+		i = uart3->SR;
+		i = uart3->DR;
+		i=i;
 	DMA_Cmd(DMA1_Channel3,DISABLE); //¹Ø±ÕDMA £¬DMA·ÀÖ¹ÖĞ¶Ï´¦ÀíÆÚ¼äÓĞÊı¾İ
 	//printf("±ê¼Ç1");
 	if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)//Èç¹ûÎª´®¿Ú3¿ÕÏĞÖĞ¶Ï
 	{
+		
+		
 		DMA_ClearFlag(DMA1_FLAG_GL3 | DMA1_FLAG_TC3 | DMA1_FLAG_TE3 | DMA1_FLAG_HT3);//Çå³ı±êÖ¾Î»
 	 //printf("±ê¼Ç2");
 
@@ -287,10 +291,10 @@ void USART3_IRQHandler(void)
 			memset(receivebuff->wifi_buffer,0x00,sizeof(receivebuff->wifi_buffer));
 			//´«ÊäÏûÏ¢¶ÓÁĞ
 					//printf("±ê¼Ç4");
-				printf("WIFIÄ£×é½ÓÊÕµ½Êı¾İ\r\n");
+				//printf("WIFIÄ£×é½ÓÊÕµ½Êı¾İ\r\n");
 				receivebuff->wifi_lenth=DATA_LEN;
 					//printf("±ê¼Ç5");
-				
+				printf("½øÈëWIFI´®¿Ú¿ÕÏĞÖĞ¶Ï");
 				memcpy(receivebuff->wifi_buffer,WIFI_DMA_Receive_Buf,256);
 				xQueueOverwriteFromISR(Wifi_buffer_Queue,(void *)&receivebuff,&xHigherPriorityTaskWoken);		
 				
@@ -343,11 +347,14 @@ void USART3_IRQHandler(void)
 	DMA_Cmd(DMA1_Channel3, ENABLE);//´¦ÀíÍê³É£¬ÖØÆôDMA
 		 //	printf("±ê¼Ç10");
 	
+	
+
 	//Çå³ı¿ÕÏĞ±êÖ¾ ¡¾×¢¡¿³ıÁË¿âº¯ÊıÇå³ı±êÖ¾Ò»¶¨ÒªÓĞÉÏÃæ²½Öè ¶ÁÈ¡SR DR¼Ä´æÆ÷Öµ
-	USART_ClearITPendingBit(USART1, USART_IT_TC);
-	USART_ClearITPendingBit(USART1, USART_IT_IDLE);
+	USART_ClearITPendingBit(USART3, USART_IT_TC);
+	USART_ClearITPendingBit(USART3, USART_IT_IDLE);
 				// printf("±ê¼Ç11");
-			
+		i = uart3->SR;
+		i = uart3->DR;
 }
 
 
@@ -368,18 +375,22 @@ void DMA1_Channel2_IRQHandler(void)
  //Êı¾İ»º³åÒç³ö²úÉú
 void DMA1_Channel3_IRQHandler(void)
 {
-		
-	DMA_Channel_TypeDef *DMA1_CH3 = DMA1_Channel3;
+//		u16 i;
+//		USART_TypeDef *uart3 = USART3;
+//	DMA_Channel_TypeDef *DMA1_CH3 = DMA1_Channel3;
 	 	//printf("±ê¼Ç12");
 	DMA_ClearITPendingBit(DMA1_IT_TC3);
 
 	DMA_ClearITPendingBit(DMA1_IT_TE3); //Çå³ı¿ÕÏĞÖĞ¶Ï
 
-	DMA_Cmd(DMA1_Channel3, DISABLE);//DMA½ÓÊÕ¹Ø±Õ
+//		i = uart3->SR;
+//		i = uart3->DR;
+//		i=i;
+//	DMA_Cmd(DMA1_Channel3, DISABLE);//DMA½ÓÊÕ¹Ø±Õ
 
-	DMA1_CH3->CNDTR = 256;//ÖØĞÂ×°ÌîÊı¾İ´óĞ¡
+//	DMA1_CH3->CNDTR = 256;//ÖØĞÂ×°ÌîÊı¾İ´óĞ¡
 
-	DMA_Cmd(DMA1_Channel3, ENABLE);//DMA½ÓÊÕ¿ªÆô
+//	DMA_Cmd(DMA1_Channel3, ENABLE);//DMA½ÓÊÕ¿ªÆô
 		 	//printf("±ê¼Ç13");
 }
 

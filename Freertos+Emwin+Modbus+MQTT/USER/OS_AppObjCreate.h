@@ -4,13 +4,12 @@
 #include "queue.h"
 #include "semphr.h"
 
+#include "MODBUSConfig.h"
 
 
 
 
 
-void Key_QueueCreat(void);//按键消息队列
-void RS485_buffer_QueueCreat(void);//rs485消息队列
 //消息队列创建
 void QueueCreate(void);
 

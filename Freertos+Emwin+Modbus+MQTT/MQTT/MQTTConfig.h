@@ -46,7 +46,7 @@ Subscribe 订阅报文配设
 
 /*******订阅报文1*******/
 #define subscribe_packetid   1   // 报文标识符
-#define subscrible1_topicFilters1   "AUBOi3/KEY"  //主题1
+#define subscrible1_topicFilters1   "AUBOi3/Move"  //主题1
 #define subscribe1_qos1        1   //主题1订阅等级
 
 

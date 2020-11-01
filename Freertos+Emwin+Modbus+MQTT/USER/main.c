@@ -6,12 +6,13 @@
 
 
 
-
+VAR_T MODBUS_reg;
 /********************************消息队列句柄声明*********************************/
 QueueHandle_t Key_Queue;
 QueueHandle_t RS485_buffer_Queue;
 QueueHandle_t Wifi_buffer_Queue;
 QueueHandle_t PINGREQ_Queue;
+QueueHandle_t MODBUS_Var_Queue;
 /********************************信号量句柄*************************************/
 SemaphoreHandle_t BinarySemaphore_USART2ISR;	//USART2空闲中断二值信号量句柄
 SemaphoreHandle_t BinarySemaphore_USART3ISR;  //USART3空闲中断二值信号量句柄
@@ -130,17 +131,26 @@ int main(void)
 //开始任务任务函数
 void start_task(void *pvParameters)
 {
+	VAR_T *MODBUS_reg;
+	VAR_T init_modbus_reg;
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC,ENABLE);//开启CRC时钟
 	GUI_Init();  					//STemWin初始化
 	WM_SetCreateFlags(WM_CF_MEMDEV);
+	MODBUS_reg=&init_modbus_reg;
   taskENTER_CRITICAL();           //进入临界区
 	
 	
-	
+
 	OS_AppObjCreate();       //创建任务间通讯机制
 	
-	
+
 	xSemaphoreGive(BinarySemaphore_MQTTconnect);//发送MQTT Connack报文信号
+	
+	//MODBUS寄存器复位
+	MODBUS_reg->P01=0;
+	MODBUS_reg->P02=0;
+	xQueueOverwrite(MODBUS_Var_Queue,(void *)&MODBUS_reg);
+	
 	//创建触摸任务
     xTaskCreate((TaskFunction_t )touch_task,             
                 (const char*    )"touch_task",           

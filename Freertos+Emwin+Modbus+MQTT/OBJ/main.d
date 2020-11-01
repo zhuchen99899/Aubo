@@ -114,9 +114,9 @@
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_usrif.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_led.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_key.h
+..\obj\main.o: ..\MODBUS\MODBUSConfig.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_modbus.h
 ..\obj\main.o: ..\MODBUS\modbus_slave.h
-..\obj\main.o: ..\MODBUS\MODBUSconfig.h
 ..\obj\main.o: ..\MODBUS\crc.h
 ..\obj\main.o: ..\MODBUS\modbus_packet.h
 ..\obj\main.o: ..\FreeRTOS\Freertos_APP\task_MQTT_connect.h

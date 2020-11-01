@@ -43,3 +43,4 @@
 ..\obj\os_appobjcreate.o: ..\FreeRTOS\include\mpu_wrappers.h
 ..\obj\os_appobjcreate.o: ..\FreeRTOS\include\queue.h
 ..\obj\os_appobjcreate.o: ..\FreeRTOS\include\semphr.h
+..\obj\os_appobjcreate.o: ..\MODBUS\MODBUSConfig.h

@@ -62,9 +62,11 @@ void usart2_init(u32 bound)
 
 	
 	/********串口中断配设*************/
-	USART_ITConfig(USART2,USART_IT_TC,DISABLE);  //关闭传输完成中断
+
 	USART_ITConfig(USART2,USART_IT_RXNE,DISABLE);//关闭接收中断(接收第一个字节时开启的中断)
-	
+		USART_ITConfig(USART2,USART_IT_TC,DISABLE);  //关闭传输完成中断 
+		
+		
 	USART_ITConfig(USART2,USART_IT_IDLE,ENABLE); //开启串口空闲中断
 	USART_ITConfig(USART2,USART_IT_ERR,ENABLE);	//开启错误中断
 	USART_ITConfig(USART2,USART_IT_PE,ENABLE);	  //开启奇偶错误中断
@@ -131,7 +133,7 @@ DMA_ITConfig(DMA1_Channel7, DMA_IT_TC, ENABLE);//使能传输完成中断
 
 DMA_ITConfig(DMA1_Channel7, DMA_IT_TE, ENABLE); //使能传输错误中断
 	
-DMA_Cmd(DMA1_Channel7, ENABLE);  //DMA通道7传输使能
+
 
 	//串口发送DMA使能
 
@@ -243,7 +245,7 @@ DMA_Cmd(DMA1_Channel6, ENABLE);  //DMA通道6接收传输使能
 
 };
 
-/************wifi初始化************/
+/************485初始化************/
 void RS485_init(u32 bound)
 {
 
@@ -311,7 +313,7 @@ void USART2_IRQHandler(void)
 			memset(receivebuff->RS485buff,0x00,sizeof(receivebuff->RS485buff));
 			//传输消息队列
 					//printf("标记4");
-				printf("485总线接收到数据\r\n");
+				//printf("485总线接收到数据\r\n");
 				receivebuff->RS485_lenth=DATA_LEN;
 					//printf("标记5");
 				
@@ -351,11 +353,34 @@ void USART2_IRQHandler(void)
 		i = uart2->DR;
 		
 	}
-	else
+	else if(USART_GetITStatus(USART2, USART_IT_TC) != RESET) //发送完成中断
 	{
 		//错误类型计数total_err2++;
 		//funcCode.all[FUNCCODE_P11_15] = total_err2;
 		//printf("出错 err3");
+
+		
+		
+
+	//进入串口2发送完成中断
+		if (USART_GetFlagStatus(USART2,USART_FLAG_TC)==SET)
+		{
+		USART_ClearFlag(USART2,USART_FLAG_TC);//事先清除发送完成中断标志，在发送完成中断中转换接收模式
+		USART_ClearITPendingBit(USART2, USART_IT_TC);
+		USART_ITConfig(USART2,USART_IT_TC,DISABLE);
+		i = uart2->SR;
+		i = uart2->DR;
+		RS485_TX_EN=0;				//设置为接收模式	
+		}
+		
+		
+
+	}
+	else 
+	{
+		//错误类型计数total_err2++;
+		//funcCode.all[FUNCCODE_P11_15] = total_err2;
+		//printf("出错 err4");
 		i = uart2->SR;
 		i = uart2->DR;
 			
@@ -368,8 +393,8 @@ void USART2_IRQHandler(void)
 		 //	printf("标记10");
 	
 	//清除空闲标志 【注】除了库函数清除标志一定要有上面步骤 读取SR DR寄存器值
-	USART_ClearITPendingBit(USART1, USART_IT_TC);
-	USART_ClearITPendingBit(USART1, USART_IT_IDLE);
+	USART_ClearITPendingBit(USART2, USART_IT_TC);
+	USART_ClearITPendingBit(USART2, USART_IT_IDLE);
 				// printf("标记11");
 			
 }
@@ -378,13 +403,28 @@ void USART2_IRQHandler(void)
  /****DMA1 通道7  发送完成中断*********/
 void DMA1_Channel7_IRQHandler(void)
 {
- 
+	/*******注意不能再DMA发送完成中断(TC)中切换485收发模式********/
+	//这会导致最后的两个字节发送不出去，这是因为：DMA的"发送完成中断"出现再刚发送倒数
+	//第二个字节的起始位置，这个时候切换485的收发，若接收端不是奇校验的话，将会误收到0xFF 最后第一肯定也
+	//解决方法：加延时或者使用串口发送完成中断中使用 485模式切换
+	
+	/**********【注意】*********************/
+	//启动 DMA前，先关闭UART发送完成中断，并清除发送完成中断标志
+	//在DMA传输完成中断函数中，开启UART发送完成中断
+	//在UART发送完成中断函数中，切换RS485为接状态
+	
+	//RS485_TX_EN=0;				//设置为接收模式	
+	
+  
+	
   DMA_ClearITPendingBit(DMA1_IT_TC7);
  
   DMA_ClearITPendingBit(DMA1_IT_TE7); //清除空闲中断
- 
-  DMA_Cmd(DMA1_Channel7, DISABLE);//DMA关闭
 
+  DMA_Cmd(DMA1_Channel7, DISABLE);//DMA关闭
+	
+
+  USART_ITConfig(USART2,USART_IT_TC,ENABLE);
   
 }
 
@@ -420,20 +460,43 @@ void RS485_send(u8 * buffer,u32 len)
 
 	
 	RS485_TX_EN=1;				//设置为发送模式	
+	
+
+	
+	DMA_ClearFlag(DMA1_FLAG_TC7);      //清理DMA发送完成中断
+	DMA_ClearITPendingBit(DMA1_IT_TC7);
+	
+	USART_ITConfig(USART2,USART_IT_TC,DISABLE);//启动DMA前，先关闭UART发送完成中断
+	USART_ClearFlag(USART2,USART_FLAG_TC);//事先清除发送完成中断标志，在发送完成中断中转换接收模式
+	USART_ClearITPendingBit(USART2, USART_IT_TC);
+
+	
 	memset(RS485_DMA_Send_Buf, 0x00, sizeof(RS485_DMA_Send_Buf));//缓冲清0
 	
 	memcpy(RS485_DMA_Send_Buf,buffer,len);
 	
+
 	
 	USART_DMACmd(USART2,USART_DMAReq_Tx,ENABLE); //使能串口2的DMA发送      
 	
 	DMA_Cmd(DMA1_Channel7, DISABLE);//DMA 关闭
+	
+	
 	DMA_SetCurrDataCounter(DMA1_Channel7,len);//DMA通道的DMA缓存的大小
+	
+	
+	
+	
+
+	
 	DMA_Cmd(DMA1_Channel7, ENABLE);        //DMA开启
+	
+	
+	
 
 	//total_tx++;
 
-	RS485_TX_EN=0;				//设置为接收模式	
+	
 }
 
 

@@ -6,6 +6,14 @@
 #include "MODBUSconfig.h"
 #include "crc.h"
 #include "RS485.h"
+
+#if Freertos_SUPPROT
+
+#include "freertos.h"
+#include "queue.h"
+
+#endif
+
 uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value);
 uint8_t MODS_WriteRegValue(uint16_t reg_addr, uint16_t reg_value);
 void MODS_SendWithCRC(u8 *RS485_send_buffer, int RS485_send_Len);
